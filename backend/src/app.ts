@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { env } from "./env.js";
+import { env } from "./lib/env.js";
 
 const app = express();
 
