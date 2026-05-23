@@ -6,7 +6,10 @@ import {
   removeAnnouncement,
   updateAnnouncement,
 } from "../services/announcements.js";
-import { Category } from "../generated/prisma/enums.js";
+import {
+  announcementSchema,
+  listAnnouncementsQuerySchema,
+} from "../schemas/announcement.js";
 import { ValidationError } from "../lib/errors.js";
 
 const getId = (req: Request) => {
@@ -16,24 +19,9 @@ const getId = (req: Request) => {
   }
   return id;
 };
-const getBody = (req: Request) => {
-  const { title, body, categories, publishedAt } = req.body;
-  if (!title || !body || !categories || !publishedAt) {
-    throw new ValidationError(
-      "One of the requirements for request was not found.",
-    );
-  }
-  return {
-    title,
-    body,
-    categories,
-    publishedAt: new Date(publishedAt),
-  };
-};
 
 export const list = async (req: Request, res: Response) => {
-  const category = req.query.category as Category | undefined;
-  const search = req.query.search as string | undefined;
+  const { category, search } = listAnnouncementsQuerySchema.parse(req.query);
   const announcements = await listAnnouncements(category, search);
   res.json(announcements);
 };
@@ -45,15 +33,15 @@ export const getById = async (req: Request, res: Response) => {
 };
 
 export const create = async (req: Request, res: Response) => {
-  const body = getBody(req);
-  const newAnnouncement = await createAnnouncement(body);
+  const data = announcementSchema.parse(req.body);
+  const newAnnouncement = await createAnnouncement(data);
   res.status(201).json(newAnnouncement);
 };
 
 export const update = async (req: Request, res: Response) => {
   const id = getId(req);
-  const body = getBody(req);
-  const updatedAnnouncement = await updateAnnouncement(id, body);
+  const data = announcementSchema.parse(req.body);
+  const updatedAnnouncement = await updateAnnouncement(id, data);
   res.json(updatedAnnouncement);
 };
 

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { env } from "./lib/env.js";
 import { announcementsRouter } from "./routes/announcements.js";
+import { errorHandler } from "./middleware/error.js";
 
 const app = express();
 
@@ -14,5 +15,6 @@ app.use("/announcements", announcementsRouter);
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
+app.use(errorHandler);
 
 export { app };
