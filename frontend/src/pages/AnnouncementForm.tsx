@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Select from "react-select";
-import { format } from "date-fns";
+import { format, parse, isValid } from "date-fns";
 import { CATEGORY_LABELS } from "../lib/categories";
 
 const categoryOptions = Object.entries(CATEGORY_LABELS).map(
@@ -11,11 +11,13 @@ const categoryOptions = Object.entries(CATEGORY_LABELS).map(
 const AnnouncementForm = () => {
   const { id } = useParams();
   const isEdit = !!id;
+  const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
   const [publicationDate, setPublicationDate] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!id) return;
@@ -33,8 +35,59 @@ const AnnouncementForm = () => {
     loadAnnouncement();
   }, [id]);
 
+  const handleSubmit = async () => {
+    setError("");
+
+    if (!title.trim()) {
+      setError("Title is required");
+      return;
+    }
+    if (!content.trim()) {
+      setError("Content is required");
+      return;
+    }
+    if (categories.length === 0) {
+      setError("At least one category is required");
+      return;
+    }
+    const parsedDate = parse(
+      publicationDate,
+      "MM/dd/yyyy HH:mm",
+      new Date(),
+    );
+    if (!isValid(parsedDate)) {
+      setError("Publication date must be in MM/DD/YYYY HH:mm format");
+      return;
+    }
+
+    const payload = {
+      title,
+      body: content,
+      categories,
+      publishedAt: parsedDate.toISOString(),
+    };
+
+    const url = isEdit
+      ? `http://localhost:3000/announcements/${id}`
+      : `http://localhost:3000/announcements`;
+    const method = isEdit ? "PUT" : "POST";
+
+    const res = await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      setError("Failed to save announcement");
+      return;
+    }
+
+    navigate("/announcements");
+  };
+
   return (
-    <div className="h-screen w- flex justify-center items-center flex-col">
+    <div className="h-screen flex justify-center items-center flex-col">
       <div className="h-[88%] w-full border-t border-gray-200 flex justify-center items-center">
         <div className="w-full max-w-2xl px-8 space-y-8">
           <h1 className="text-2xl font-bold">
@@ -88,8 +141,12 @@ const AnnouncementForm = () => {
             />
           </div>
 
-          <div className="flex justify-end">
-            <button className="bg-amber-400 text-black font-bold px-6 py-2 rounded-full hover:bg-amber-500 cursor-pointer">
+          <div className="flex items-center justify-end gap-4">
+            {error && <p className="text-red-600 text-sm">{error}</p>}
+            <button
+              onClick={handleSubmit}
+              className="bg-amber-400 text-black font-bold px-6 py-2 rounded-full hover:bg-amber-500 cursor-pointer"
+            >
               Publish
             </button>
           </div>

@@ -49,10 +49,9 @@ const AnnouncementsList = () => {
     };
     getAnnouncements();
   }, [page, search, category, refetchKey]);
-  console.log(response);
 
   return (
-    <div className="h-screen w- flex justify-center items-center flex-col">
+    <div className="h-screen flex justify-center items-center flex-col">
       <div className="h-[82%] w-full border-t border-gray-200">
         <h1 className="text-2xl font-bold ml-10 pt-3">Announcements</h1>
         <div className="p-5">
