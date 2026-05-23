@@ -21,9 +21,9 @@ const getId = (req: Request) => {
 };
 
 export const list = async (req: Request, res: Response) => {
-  const { category, search } = listAnnouncementsQuerySchema.parse(req.query);
-  const announcements = await listAnnouncements(category, search);
-  res.json(announcements);
+  const { category, search, page, limit } = listAnnouncementsQuerySchema.parse(req.query);
+  const result = await listAnnouncements(category, search, page, limit);
+  res.json(result);
 };
 
 export const getById = async (req: Request, res: Response) => {

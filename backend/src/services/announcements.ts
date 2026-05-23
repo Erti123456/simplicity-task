@@ -19,7 +19,12 @@ const findAnnouncement = async (id: string) => {
   return announcement;
 };
 
-export const listAnnouncements = (category?: Category, search?: string) => {
+export const listAnnouncements = async (
+  category?: Category,
+  search?: string,
+  page = 1,
+  limit = 10,
+) => {
   const where: Prisma.AnnouncementWhereInput = {};
 
   if (category) {
@@ -33,10 +38,17 @@ export const listAnnouncements = (category?: Category, search?: string) => {
     ];
   }
 
-  return prisma.announcement.findMany({
-    where,
-    orderBy: { updatedAt: "desc" },
-  });
+  const [data, total] = await Promise.all([
+    prisma.announcement.findMany({
+      where,
+      orderBy: { updatedAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.announcement.count({ where }),
+  ]);
+
+  return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
 };
 
 export const getAnnouncement = async (id: string) => {
