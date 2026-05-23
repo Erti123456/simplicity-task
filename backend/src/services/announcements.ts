@@ -2,6 +2,7 @@ import { prisma } from "../lib/db.js";
 import { Prisma } from "../generated/prisma/client.js";
 import { Category } from "../generated/prisma/enums.js";
 import { NotFoundError } from "../lib/errors.js";
+import { getIO } from "../lib/realtime.js";
 
 type CreateAnnouncementData = {
   title: string;
@@ -42,8 +43,10 @@ export const getAnnouncement = async (id: string) => {
   return findAnnouncement(id);
 };
 
-export const createAnnouncement = (data: CreateAnnouncementData) => {
-  return prisma.announcement.create({ data });
+export const createAnnouncement = async (data: CreateAnnouncementData) => {
+  const newAnnouncement = await prisma.announcement.create({ data });
+  getIO().emit("announcement:created", newAnnouncement);
+  return newAnnouncement;
 };
 
 export const updateAnnouncement = async (
