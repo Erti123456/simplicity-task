@@ -11,7 +11,7 @@ type Props = {
 
 const Toolbar = ({ search, onSearchChange, category, onCategoryChange }: Props) => {
   return (
-    <div className="flex items-center justify-end gap-4 mb-4">
+    <div className="flex flex-wrap items-center justify-end gap-3 md:gap-4 mb-4">
       <div className="relative">
         <Search
           size={16}

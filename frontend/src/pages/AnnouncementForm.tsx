@@ -88,8 +88,8 @@ const AnnouncementForm = () => {
 
   return (
     <div className="h-screen flex justify-center items-center flex-col">
-      <div className="h-[88%] w-full border-t border-gray-200 flex justify-center items-center">
-        <div className="w-full max-w-2xl px-8 space-y-8">
+      <div className="h-[88%] w-full overflow-y-auto border-t border-gray-200 flex justify-center items-center">
+        <div className="w-full max-w-2xl px-4 md:px-8 py-6 space-y-8">
           <h1 className="text-2xl font-bold">
             {isEdit ? "Edit the announcement" : "Create announcement"}
           </h1>

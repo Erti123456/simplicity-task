@@ -52,16 +52,16 @@ const AnnouncementsList = () => {
 
   return (
     <div className="h-screen flex justify-center items-center flex-col">
-      <div className="h-[82%] w-full border-t border-gray-200">
-        <h1 className="text-2xl font-bold ml-10 pt-3">Announcements</h1>
-        <div className="p-5">
+      <div className="h-[82%] w-full overflow-y-auto border-t border-gray-200">
+        <h1 className="text-2xl font-bold ml-4 md:ml-10 pt-3">Announcements</h1>
+        <div className="p-4 md:p-5">
           <Toolbar
             search={search}
             onSearchChange={handleSearchChange}
             category={category}
             onCategoryChange={handleCategoryChange}
           />
-          <div className="grid grid-cols-5 gap-2 py-4 border-b border-t border-gray-200 text-sm font-bold">
+          <div className="hidden md:grid grid-cols-5 gap-2 py-4 border-b border-t border-gray-200 text-sm font-bold">
             <p className="text-center">Title</p>
             <p className="text-center">Publication date</p>
             <p className="text-center">Last update</p>
@@ -73,7 +73,7 @@ const AnnouncementsList = () => {
               ? Array.from({ length: 5 }).map((_, i) => (
                   <div
                     key={i}
-                    className="grid grid-cols-5 gap-4 py-4 border-b border-gray-200 animate-pulse"
+                    className="mb-3 flex flex-col gap-3 rounded-lg border border-gray-200 p-4 animate-pulse md:mb-0 md:grid md:grid-cols-5 md:gap-4 md:rounded-none md:border-0 md:border-b md:p-0 md:py-4"
                   >
                     <div className="h-4 w-32 bg-gray-200 rounded" />
                     <div className="h-4 w-32 bg-gray-200 rounded" />
